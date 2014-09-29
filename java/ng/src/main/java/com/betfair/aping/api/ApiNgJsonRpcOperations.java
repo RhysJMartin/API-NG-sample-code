@@ -4,7 +4,7 @@ import com.betfair.aping.ApiNGDemo;
 import com.betfair.aping.containers.EventTypeResultContainer;
 import com.betfair.aping.containers.ListMarketBooksContainer;
 import com.betfair.aping.containers.ListMarketCatalogueContainer;
-import com.betfair.aping.containers.PlaceOrdersContainer;
+import com.betfair.aping.containers.*;
 import com.betfair.aping.entities.*;
 import com.betfair.aping.enums.*;
 import com.betfair.aping.exceptions.APINGException;
@@ -87,6 +87,38 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations{
 
         return container.getResult();
 
+    }
+
+    //RHMA: new function to list competitions
+    public List<CompetitionResult> listCompetitions(MarketFilter filter, String appKey, String ssoId) throws APINGException {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put(FILTER, filter);
+        params.put(LOCALE, locale);
+        String result = getInstance().makeRequest(ApiNgOperation.LISTCOMPETITIONS.getOperationName(), params, appKey, ssoId);
+        if(ApiNGDemo.isDebug())
+            System.out.println("\nResponse: "+result);
+
+        CompetitionResultContainer container = JsonConverter.convertFromJson(result, CompetitionResultContainer.class);
+        if(container.getError() != null)
+            throw container.getError().getData().getAPINGException();
+
+        return container.getResult();
+    }
+
+    //RHMA: new function to list events
+    public List<EventResult> listEvents(MarketFilter filter, String appKey, String ssoId) throws APINGException {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put(FILTER, filter);
+        params.put(LOCALE, locale);
+        String result = getInstance().makeRequest(ApiNgOperation.LISTEVENTS.getOperationName(), params, appKey, ssoId);
+        if(ApiNGDemo.isDebug())
+            System.out.println("\nResponse: "+result);
+
+        EventResultContainer container = JsonConverter.convertFromJson(result, EventResultContainer.class);
+        if(container.getError() != null)
+            throw container.getError().getData().getAPINGException();
+
+        return container.getResult();
     }
 
     public PlaceExecutionReport placeOrders(String marketId, List<PlaceInstruction> instructions, String customerRef , String appKey, String ssoId) throws APINGException {
